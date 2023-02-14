@@ -74,7 +74,7 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
                 {
                     forking: {
                         jsonRpcUrl: process.env.NODE_URL,
-                        blockNumber: 16597635,
+                        blockNumber: 16628039,
                     },
                 },
             ],
@@ -155,7 +155,7 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
             poolManagerV4 = result.poolManagerV4;
             boosterOwnerSecondary = result.boosterOwnerSecondary;
         });
-        describe("Protocol DAO setup transactions", () => {
+        describe.skip("Protocol DAO setup transactions", () => {
             it("Update stash implementation via BoosterOwner", async () => {
                 await phase6.boosterOwner.setStashFactoryImplementation(
                     ZERO_ADDRESS,
@@ -188,8 +188,9 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
 
     describe("Config checks", () => {
         it("BoosterOwnerSecondary has the correct config", async () => {
-            const poolLength = await phase6.booster.poolLength();
-            expect(await boosterOwnerSecondary.oldPidCheckpoint()).eq(poolLength.sub(1));
+            // const poolLength = await phase6.booster.poolLength();
+            // As this is after the deployment has happened just hardcode this value
+            expect(await boosterOwnerSecondary.oldPidCheckpoint()).eq(47);
             expect(await boosterOwnerSecondary.booster()).eq(phase6.booster.address);
             expect(await boosterOwnerSecondary.boosterOwner()).eq(phase6.boosterOwner.address);
         });
@@ -209,6 +210,34 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
      * --------------------------------------------------------------------- */
 
     describe("Protected functions", () => {
+        it("BoosterOwner", async () => {
+            await expect(phase6.boosterOwner.transferOwnership(ZERO_ADDRESS)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.setArbitrator(ZERO_ADDRESS)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.setFeeInfo(ZERO_ADDRESS, ZERO_ADDRESS)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.updateFeeInfo(ZERO_ADDRESS, false)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.setFeeManager(ZERO_ADDRESS)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.setVoteDelegate(ZERO_ADDRESS)).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.shutdownSystem()).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.queueForceShutdown()).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.forceShutdownSystem()).to.be.revertedWith("!owner");
+            await expect(
+                phase6.boosterOwner.setStashFactoryImplementation(ZERO_ADDRESS, ZERO_ADDRESS, ZERO_ADDRESS),
+            ).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.execute(ZERO_ADDRESS, 0, "0x")).to.be.revertedWith("!owner");
+            await expect(
+                phase6.boosterOwner.setRescueTokenDistribution(ZERO_ADDRESS, ZERO_ADDRESS, ZERO_ADDRESS),
+            ).to.be.revertedWith("!owner");
+            await expect(phase6.boosterOwner.setRescueTokenReward(ZERO_ADDRESS, ZERO_ADDRESS)).to.be.revertedWith(
+                "!owner",
+            );
+            await expect(phase6.boosterOwner.setStashExtraReward(ZERO_ADDRESS, ZERO_ADDRESS)).to.be.revertedWith(
+                "!owner",
+            );
+            await expect(phase6.boosterOwner.setStashRewardHook(ZERO_ADDRESS, ZERO_ADDRESS)).to.be.revertedWith(
+                "!owner",
+            );
+        });
+
         it("BoosterOwnerSecondary", async () => {
             await expect(boosterOwnerSecondary.setSealStashImplementation()).to.be.revertedWith("!owner");
             await expect(boosterOwnerSecondary.setFeeTokenVerifier(ZERO_ADDRESS)).to.be.revertedWith("!manager");
@@ -470,7 +499,7 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
      * --------------------------------------------------------------------- */
 
     describe("PoolManagerV4 functional tests", () => {
-        let ankrPid: BigNumberish;
+        let ankrPid: BigNumberish = 48;
 
         it("Can not call setOperator", async () => {
             await expect(phase6.poolManagerSecondaryProxy.setOperator(protocolDao.address)).to.be.revertedWith(
@@ -482,7 +511,7 @@ describe("PoolManager/Stash/BoosterOwner Upgrades", () => {
                 phase6.poolManagerSecondaryProxy.forceAddPool(protocolDao.address, protocolDao.address, 3),
             ).to.be.revertedWith("!op");
         });
-        it("Add a new pool", async () => {
+        it.skip("Add a new pool", async () => {
             const poolLengthBefore = await phase6.booster.poolLength();
 
             // Test protect add pool
