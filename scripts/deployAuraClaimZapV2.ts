@@ -6,7 +6,18 @@ import { deployContract, waitForTx } from "../tasks/utils";
 import { DEAD_ADDRESS } from "../test-utils/constants";
 import { config } from "../tasks/deploy/mainnet-config";
 
+import { ExtSystemConfig, MultisigConfig, Phase2Deployed, Phase4Deployed, Phase6Deployed } from "./deploySystem";
+
+interface DeployConfig {
+    addresses: ExtSystemConfig;
+    multisigs: MultisigConfig;
+    getPhase2: (deployer: Signer) => Promise<Phase2Deployed>;
+    getPhase4: (deployer: Signer) => Promise<Phase4Deployed>;
+    getPhase6: (deployer: Signer) => Promise<Phase6Deployed>;
+}
+
 export async function deployAuraClaimZapV2(
+    config: DeployConfig,
     hre: HardhatRuntimeEnvironment,
     signer: Signer,
     vault: string,
@@ -34,6 +45,9 @@ export async function deployAuraClaimZapV2(
         debug,
         waitForBlocks,
     );
+
+    let tx = await claimZapV2.setApprovals();
+    await waitForTx(tx, debug, waitForBlocks);
 
     return {
         claimZapV2,

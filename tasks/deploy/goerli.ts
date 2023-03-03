@@ -228,7 +228,14 @@ task("deploy:goerli:auraClaimZapV2").setAction(async function (_: TaskArguments,
 
     //todo: add vault address
     var vault = await (await config.getAuraBalVault(deployer)).vault;
-    const { claimZapV2: claimZapV2 } = await deployAuraClaimZapV2(hre, deployer, vault.address, debug, waitForBlocks);
+    const { claimZapV2: claimZapV2 } = await deployAuraClaimZapV2(
+        config,
+        hre,
+        deployer,
+        vault.address,
+        debug,
+        waitForBlocks,
+    );
 
     console.log("update claimZapV2 address to:", claimZapV2.address);
 });

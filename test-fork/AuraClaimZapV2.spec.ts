@@ -157,7 +157,7 @@ describe("AuraClaimZapV2", () => {
 
     it("Deploy Claimzap", async () => {
         //Deploy
-        const result = await deployAuraClaimZapV2(hre, deployer.signer, vault.address, DEBUG);
+        const result = await deployAuraClaimZapV2(config, hre, deployer.signer, vault.address, DEBUG);
         claimZapV2 = result.claimZapV2;
     });
 
