@@ -198,7 +198,7 @@ contract AuraClaimZapV2 {
      * @param options                Claim options
      */
     function _callRelockRewards(Options calldata options) internal view returns (bool) {
-        return (options.lockCvxCrv || options.lockCrvDeposit || options.lockCrvDeposit || options.lockCvx);
+        return (options.lockCvxCrv || options.lockCrvDeposit || options.useCompounder || options.lockCvx);
     }
 
     /**
@@ -219,8 +219,6 @@ contract AuraClaimZapV2 {
         ClaimRewardsAmounts calldata amounts, 
         Options calldata options
     ) internal {
-
-        uint startCvxCrv = IERC20(cvxCrv).balanceOf(address(this));
         
         //lock upto given amount of crv as cvxCrv
         if (amounts.depositCrvMaxAmount > 0) {
@@ -241,9 +239,9 @@ contract AuraClaimZapV2 {
         }
         
 
-        //Locks CvxCrv if contract balance has changed
+        //Locks CvxCrv balance held on contract
         //deposit in the autocompounder if flag is set, or stake in rewards contract if not set
-        uint cvxCrvBalanceToLock = IERC20(cvxCrv).balanceOf(address(this)).sub(startCvxCrv);
+        uint cvxCrvBalanceToLock = IERC20(cvxCrv).balanceOf(address(this));
         if(cvxCrvBalanceToLock > 0){
             if(options.useCompounder) {
                 IRewardPool4626(compounder).deposit(cvxCrvBalanceToLock, msg.sender);
