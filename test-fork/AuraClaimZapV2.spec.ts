@@ -205,7 +205,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: true,
             claimLockedCvx: false,
-            claimLockedCvxStake: false,
+            lockCvxCrv: false,
             lockCrvDeposit: true,
             useAllWalletFunds: true,
             useCompounder: false,
@@ -247,7 +247,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: false,
             claimLockedCvx: false,
-            claimLockedCvxStake: false,
+            lockCvxCrv: false,
             lockCrvDeposit: false,
             useAllWalletFunds: false,
             useCompounder: false,
@@ -298,7 +298,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: false,
             claimLockedCvx: true,
-            claimLockedCvxStake: false,
+            lockCvxCrv: false,
             lockCrvDeposit: false,
             useAllWalletFunds: false,
             useCompounder: false,
@@ -349,7 +349,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: false,
             claimLockedCvx: true,
-            claimLockedCvxStake: true,
+            lockCvxCrv: true,
             lockCrvDeposit: false,
             useAllWalletFunds: false,
             useCompounder: false,
@@ -400,7 +400,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: false,
             claimLockedCvx: true,
-            claimLockedCvxStake: true,
+            lockCvxCrv: true,
             lockCrvDeposit: false,
             useAllWalletFunds: true,
             useCompounder: false,
@@ -449,7 +449,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: true,
             claimLockedCvx: true,
-            claimLockedCvxStake: true,
+            lockCvxCrv: true,
             lockCrvDeposit: false,
             useAllWalletFunds: true,
             useCompounder: true,
@@ -467,7 +467,6 @@ describe("AuraClaimZapV2", () => {
         const balanceAfter = await vault.balanceOf(aliceAddress);
         expect(balanceAfter).to.be.gt(balanceBefore);
 
-        expect(balanceAfter);
         // User waller funds option was provided, hence  zero balance is expected.
         expect(await phase2.cvxCrv.balanceOf(aliceAddress)).eq(ZERO);
         await expect(tx).to.emit(cvxCrvRewards, "Staked");
@@ -482,7 +481,7 @@ describe("AuraClaimZapV2", () => {
         const options: OptionsStruct = {
             claimCvxCrv: false,
             claimLockedCvx: false,
-            claimLockedCvxStake: false,
+            lockCvxCrv: false,
             lockCrvDeposit: false,
             useAllWalletFunds: false,
             useCompounder: false,
