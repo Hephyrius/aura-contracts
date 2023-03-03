@@ -55,10 +55,20 @@ contract AuraClaimZapV2 {
         uint256 depositCvxCrvMaxAmount;
     }
 
+    /**
+     * @dev options.
+     * - claimCvxCrv             Flag: claim from the cvxCrv rewards contract
+     * - claimLockedCvx          Flag: claim from the cvx locker contract
+     * - lockCvxCrv              Flag: pull users cvxCrvBalance ready for locking
+     * - lockCrvDeposit          Flag: locks crv rewards as cvxCrv
+     * - useAllWalletFunds       Flag: lock rewards and existing balance
+     * - useCompounder           Flag: deposit cvxCrv into autocompounder
+     * - lockCvx                 Flag: lock cvx rewards in locker
+     */
     struct Options {
         bool claimCvxCrv;
         bool claimLockedCvx;
-        bool claimLockedCvxStake;
+        bool lockCvxCrv;
         bool lockCrvDeposit;
         bool useAllWalletFunds;
         bool useCompounder;
@@ -72,6 +82,7 @@ contract AuraClaimZapV2 {
      * @param _crvDepositWrapper  crvDepositWrapper (0x8014595F2AB54cD7c604B00E9fb932176fDc86Ae);
      * @param _cvxCrvRewards      cvxCrvRewards (0x3Fe65692bfCD0e6CF84cB1E7d24108E434A7587e);
      * @param _locker             vlCVX (0xD18140b4B819b895A3dba5442F959fA44994AF50);
+     * @param _compounder         cvxCrv autocompounder vault
      */
     constructor(
         address _crv,
@@ -130,7 +141,7 @@ contract AuraClaimZapV2 {
      * @param extraRewardContracts   Array of addresses for extra rewards
      * @param tokenRewardContracts   Array of addresses for token rewards e.g vlCvxExtraRewardDistribution
      * @param tokenRewardTokens      Array of token reward addresses to use with tokenRewardContracts
-     * @param amounts                Claim rewards amoutns.
+     * @param amounts                Claim rewards amounts.
      * @param options                Claim options
      */
     function claimRewards(
@@ -143,7 +154,7 @@ contract AuraClaimZapV2 {
     ) external {
         require(tokenRewardContracts.length == tokenRewardTokens.length, "!parity");
 
-        //Gas Optim: Reduce sload gas useage if reading balance isn't required
+        //Read balances prior to reward claims only if required
         uint256 crvBalance;
         uint256 cvxBalance;
         uint256 cvxCrvBalance;
@@ -176,14 +187,18 @@ contract AuraClaimZapV2 {
             IAuraLocker(locker).getReward(msg.sender);
         }
 
-        // claim others/deposit/lock/stake
+        // deposit/lock/stake
         if (_callRelockRewards(options)) {
             _relockRewards(crvBalance, cvxBalance, cvxCrvBalance, amounts, options);
         }
     }
 
+    /**
+     * @notice returns a bool if relocking of rewards should occur
+     * @param options                Claim options
+     */
     function _callRelockRewards(Options calldata options) internal view returns (bool) {
-        return (options.claimLockedCvxStake || options.lockCrvDeposit || options.lockCrvDeposit || options.lockCvx);
+        return (options.lockCvxCrv || options.lockCrvDeposit || options.lockCrvDeposit || options.lockCvx);
     }
 
     /**
@@ -206,11 +221,8 @@ contract AuraClaimZapV2 {
     ) internal {
 
         uint startCvxCrv = IERC20(cvxCrv).balanceOf(address(this));
-        if (options.claimLockedCvxStake) {
-            _checkBalanceAndPullToken(cvxCrv, removeCvxCrvBalance, amounts.depositCvxCrvMaxAmount);
-        }
         
-        //lock upto given amount of crv and stake
+        //lock upto given amount of crv as cvxCrv
         if (amounts.depositCrvMaxAmount > 0) {
             (uint256 crvBalance, bool continued) = _checkBalanceAndPullToken(crv, removeCrvBalance, amounts.depositCrvMaxAmount);
 
@@ -221,9 +233,16 @@ contract AuraClaimZapV2 {
                     address(0)
                 );}
         }
+
+        
+        //Pull cvxCrv to contract if user wants to stake
+        if (options.lockCvxCrv) {
+            _checkBalanceAndPullToken(cvxCrv, removeCvxCrvBalance, amounts.depositCvxCrvMaxAmount);
+        }
         
 
-        //Gas Optim: Reduce max calls to stakeFor to 1. We now stake once after we transfer and deposit.
+        //Locks CvxCrv if contract balance has changed
+        //deposit in the autocompounder if flag is set, or stake in rewards contract if not set
         uint cvxCrvBalanceToLock = IERC20(cvxCrv).balanceOf(address(this)).sub(startCvxCrv);
         if(cvxCrvBalanceToLock > 0){
             if(options.useCompounder) {
