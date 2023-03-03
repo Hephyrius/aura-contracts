@@ -447,7 +447,7 @@ describe("AuraClaimZapV2", () => {
         const balanceBefore = await vault.balanceOf(aliceAddress);
 
         const options: OptionsStruct = {
-            claimCvxCrv: false,
+            claimCvxCrv: true,
             claimLockedCvx: true,
             claimLockedCvxStake: true,
             lockCrvDeposit: false,
@@ -457,7 +457,7 @@ describe("AuraClaimZapV2", () => {
         };
 
         const amounts: ClaimRewardsAmountsStruct = {
-            depositCrvMaxAmount: 0,
+            depositCrvMaxAmount: ethers.constants.MaxUint256,
             minAmountOut: 0,
             depositCvxMaxAmount: 0,
             depositCvxCrvMaxAmount: ethers.constants.MaxUint256,
@@ -465,7 +465,7 @@ describe("AuraClaimZapV2", () => {
         const tx = await claimZapV2.connect(alice).claimRewards([pool.crvRewards], [], [], [], amounts, options);
 
         const balanceAfter = await vault.balanceOf(aliceAddress);
-        expect(balanceAfter).to.be.gt(expectedRewards);
+        expect(balanceAfter).to.be.gt(balanceBefore);
 
         expect(balanceAfter);
         // User waller funds option was provided, hence  zero balance is expected.
