@@ -254,10 +254,14 @@ task("deploy:goerli:AuraBalStablePool")
         console.log("Joined pool");
     });
 
+/*
 task("deploy:mainnet:auraClaimZapV2").setAction(async function (_: TaskArguments, hre) {
     const deployer = await getSigner(hre);
 
+    //todo: add vault address
     const { claimZapV2: claimZapV2 } = await deployAuraClaimZapV2(hre, deployer, debug, waitForBlocks);
 
     console.log("update claimZapV2 address to:", claimZapV2.address);
 });
+
+*/
