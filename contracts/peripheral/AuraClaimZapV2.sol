@@ -19,6 +19,13 @@ import { IRewardPool4626 } from "../interfaces/IRewardPool4626.sol";
  *           - add getReward(address,token) type
  *           - add option to lock cvx
  *           - add option use all funds in wallet
+ *          v3:
+ *           - add option to deposit to compounder
+ *           - reduce calls to cvxcrv rewards/compounder
+ *           - removed enum and option bitshifting
+ *           - introduced options struct
+ *           - gas optimisation on use all funds balances
+ *           - helper functions to reduce code repetition
  */
 contract AuraClaimZapV2 {
     using SafeERC20 for IERC20;
@@ -85,6 +92,9 @@ contract AuraClaimZapV2 {
         compounder = _compounder;
     }
 
+    /**
+     * @notice Returns meta data of contract.
+     */
     function getName() external pure returns (string memory) {
         return "ClaimZap V3.0";
     }
@@ -93,16 +103,22 @@ contract AuraClaimZapV2 {
      * @notice Approve spending of:
      *          crv     -> crvDepositor
      *          cvxCrv  -> cvxCrvRewards
+     *          cvxCrv  -> Compounder
      *          cvx     -> Locker
      */
     function setApprovals() external {
         require(msg.sender == owner, "!auth");
         _approveToken(crv, crvDepositWrapper);
         _approveToken(cvxCrv, cvxCrvRewards);
-        _approveToken(cvx, locker);
         _approveToken(cvxCrv, compounder);
+        _approveToken(cvx, locker);
     }
 
+    /**
+     * @notice Allows a spender to spend a token
+     * @param _token     Token that will be spend
+     * @param _spender   Address that will be spending
+     */
     function _approveToken(address _token, address _spender) internal {
         IERC20(_token).safeApprove(address(_spender), 0);
         IERC20(_token).safeApprove(address(_spender), type(uint256).max);
@@ -225,6 +241,13 @@ contract AuraClaimZapV2 {
         }
     }
 
+    /**
+     * @notice  Calculates the amount of a token to pull in, if this is above 0 then pulls token
+     * @param _token                 the token to evaluate and pull
+     * @param _removeAmount          quantity of token to ignore and not redeposit (ie starting balance)
+     * @param _maxAmount             the maximum amount of a token
+     */
+    // prettier-ignore
     function _checkBalanceAndPullToken(
         address _token,
         uint256 _removeAmount,
