@@ -9,6 +9,7 @@ import { config } from "../tasks/deploy/mainnet-config";
 export async function deployAuraClaimZapV2(
     hre: HardhatRuntimeEnvironment,
     signer: Signer,
+    vault: string,
     debug = false,
     waitForBlocks = 0,
 ) {
@@ -27,7 +28,7 @@ export async function deployAuraClaimZapV2(
             phase4.crvDepositorWrapper.address,
             phase6.cvxCrvRewards.address,
             phase4.cvxLocker.address,
-            DEAD_ADDRESS, //TODO: swap for an actual address of a compoundoor
+            vault,
         ],
         {},
         debug,

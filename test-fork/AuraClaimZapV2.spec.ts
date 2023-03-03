@@ -12,6 +12,7 @@ import {
     IERC20,
     IERC20__factory,
     AuraClaimZapV2,
+    AuraBalVault,
 } from "../types";
 import { simpleToExactAmount } from "../test-utils/math";
 import {
@@ -24,6 +25,7 @@ import {
 } from "../scripts/deploySystem";
 import { impersonate, impersonateAccount, increaseTime } from "../test-utils";
 import { ZERO_ADDRESS, DEAD_ADDRESS, ZERO, ONE_WEEK } from "../test-utils/constants";
+import { deployVault } from "../scripts/deployVault";
 import { deployAuraClaimZapV2 } from "../scripts/deployAuraClaimZapV2";
 import { ClaimRewardsAmountsStruct, OptionsStruct } from "types/generated/AuraClaimZapV2";
 import { BaseRewardPool__factory } from "../types/generated/";
@@ -43,6 +45,7 @@ async function impersonateAndTransfer(tokenAddress: string, from: string, to: st
 
 describe("AuraClaimZapV2", () => {
     let claimZapV2: AuraClaimZapV2;
+    let vault: AuraBalVault;
     let dao: Account;
     let deployer: Account;
     let depositor: Account;
@@ -147,14 +150,20 @@ describe("AuraClaimZapV2", () => {
      * todo: Clean up
      * ----------------------------------------------------------------------- */
 
-    it("Deploy", async () => {
+    it("deploy vault", async () => {
+        const result = await deployVault(config, hre, deployer.signer, DEBUG);
+        vault = result.vault;
+    });
+
+    it("Deploy Claimzap", async () => {
         //Deploy
-        const result = await deployAuraClaimZapV2(hre, deployer.signer, DEBUG);
+        const result = await deployAuraClaimZapV2(hre, deployer.signer, vault.address, DEBUG);
         claimZapV2 = result.claimZapV2;
     });
 
     it("initial configuration is correct", async () => {
         expect(await claimZapV2.getName()).to.be.eq("ClaimZap V3.0");
+        expect(await claimZapV2.compounder()).to.be.eq(vault.address);
     });
 
     it("set approval for deposits", async () => {
@@ -168,6 +177,7 @@ describe("AuraClaimZapV2", () => {
         expect(await phase4.cvx.allowance(claimZapV2.address, phase4.cvxLocker.address)).gte(
             ethers.constants.MaxUint256,
         );
+        expect(await phase4.cvxCrv.allowance(claimZapV2.address, vault.address)).gte(ethers.constants.MaxUint256);
     });
 
     it("claim rewards from cvxCrvStaking", async () => {
@@ -407,6 +417,57 @@ describe("AuraClaimZapV2", () => {
 
         const balanceAfter = await balToken.balanceOf(aliceAddress);
         expect(balanceAfter.sub(balanceBefore)).eq(expectedRewards);
+        // User waller funds option was provided, hence  zero balance is expected.
+        expect(await phase2.cvxCrv.balanceOf(aliceAddress)).eq(ZERO);
+        await expect(tx).to.emit(cvxCrvRewards, "Staked");
+    });
+
+    it("claim from pools and then deposit into new vault", async () => {
+        const stake = true;
+        const amount = ethers.utils.parseEther("2");
+        const poolId = 45;
+
+        await getDolaUsdcLP(aliceAddress, amount);
+
+        await LPToken.connect(alice).approve(phase6.booster.address, amount);
+        await phase6.booster.connect(alice).deposit(poolId, amount, stake);
+
+        await phase6.booster.earmarkRewards(poolId);
+        const pool = await phase6.booster.poolInfo(poolId);
+
+        const crvRewards = BaseRewardPool__factory.connect(pool.crvRewards, dao.signer);
+        const cvxCrvRewards = BaseRewardPool__factory.connect(await claimZapV2.cvxCrvRewards(), dao.signer);
+
+        await increaseTime(ONE_WEEK.mul("2"));
+
+        const expectedRewards = await crvRewards.earned(aliceAddress);
+
+        // add some cvxCrv to alice
+        await phase2.cvxCrv.connect(alice).approve(claimZapV2.address, ethers.constants.MaxUint256);
+        const balanceBefore = await vault.balanceOf(aliceAddress);
+
+        const options: OptionsStruct = {
+            claimCvxCrv: false,
+            claimLockedCvx: true,
+            claimLockedCvxStake: true,
+            lockCrvDeposit: false,
+            useAllWalletFunds: true,
+            useCompounder: true,
+            lockCvx: false,
+        };
+
+        const amounts: ClaimRewardsAmountsStruct = {
+            depositCrvMaxAmount: 0,
+            minAmountOut: 0,
+            depositCvxMaxAmount: 0,
+            depositCvxCrvMaxAmount: ethers.constants.MaxUint256,
+        };
+        const tx = await claimZapV2.connect(alice).claimRewards([pool.crvRewards], [], [], [], amounts, options);
+
+        const balanceAfter = await vault.balanceOf(aliceAddress);
+        expect(balanceAfter).to.be.gt(expectedRewards);
+
+        expect(balanceAfter);
         // User waller funds option was provided, hence  zero balance is expected.
         expect(await phase2.cvxCrv.balanceOf(aliceAddress)).eq(ZERO);
         await expect(tx).to.emit(cvxCrvRewards, "Staked");
