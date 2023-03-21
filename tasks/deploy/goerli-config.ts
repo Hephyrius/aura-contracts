@@ -93,9 +93,9 @@ const naming = {
 };
 
 const multisigs = {
-    vestingMultisig: "0x30019eB135532bDdF2Da17659101cc000C73c8e4",
-    treasuryMultisig: "0x30019eB135532bDdF2Da17659101cc000C73c8e4",
-    daoMultisig: "0x30019eB135532bDdF2Da17659101cc000C73c8e4",
+    vestingMultisig: "0xcC4790f1493aD2be35f868e8429398794246144A",
+    treasuryMultisig: "0xcC4790f1493aD2be35f868e8429398794246144A",
+    daoMultisig: "0xcC4790f1493aD2be35f868e8429398794246144A",
 };
 
 const distroList = getMockDistro();
@@ -111,40 +111,40 @@ const getPhase2 = async (deployer: Signer): Promise<Phase2Deployed> => ({
     booster: Booster__factory.connect("0xA0357552c3e4ACB2f5828D1322D90A22801AD196", deployer),
     boosterOwner: BoosterOwner__factory.connect("0xeAb0b6c2528C54887d5DD3765ed9Bd1884A1d125", deployer),
     factories: {
-        rewardFactory: RewardFactory__factory.connect("0x78868AcEe480928E3A5a9e50545bf2f53903e350", deployer),
-        stashFactory: StashFactoryV2__factory.connect("0x17581a142f181CeA807a480520537E4e97A63adB", deployer),
-        tokenFactory: TokenFactory__factory.connect("0xFA226c6ec7d74E5a18839D3E5a2b35B9AE8d65d9", deployer),
-        proxyFactory: ProxyFactory__factory.connect("0x9D246b32686f424162cB8e48A519E3a49c9AB000", deployer),
+        rewardFactory: RewardFactory__factory.connect("0xdc68A603703E4F9A0B2f80ac0480875b3629818C", deployer),
+        stashFactory: StashFactoryV2__factory.connect("0xAB63B2D56322be318fe158e535854623e9622313", deployer),
+        tokenFactory: TokenFactory__factory.connect("0x7aBCB88742AF7B7A28fb66AA8ec1544cE4682c6c", deployer),
+        proxyFactory: ProxyFactory__factory.connect("0xaD55ab6fF97D02a38292bC6833AdE1fb231AC125", deployer),
     },
-    arbitratorVault: ArbitratorVault__factory.connect("0xc2939C598e2D044A87C8E22a90A9e36b9579F197", deployer),
-    cvxCrv: CvxCrvToken__factory.connect("0xf80D3083b18fe3f11196E57438258330Ba4f15Ec", deployer),
+    arbitratorVault: ArbitratorVault__factory.connect("0x8e258eaBDc2aeE5528A9517C0199DB8f5CdC2cC9", deployer),
+    cvxCrv: CvxCrvToken__factory.connect("0x13CCfb302Ab3EC5e646bD9Bdc87180fD255ee6A8", deployer),
     cvxCrvBpt: {
         poolId: "0xdffd908d17c93d1f9253148826a00d920a19e85e00020000000000000000060c",
-        address: "0xdffd908d17c93d1f9253148826a00d920a19e85e",
+        address: "0xD30d0B8667fd215ECEe125f56ae1e30d42659850",
     },
-    cvxCrvRewards: BaseRewardPool__factory.connect("0x09421e5d9c2b11f502482dce2b718b037fd10a25", deployer),
-    crvDepositor: CrvDepositor__factory.connect("0xD2e06829a8464bd802Ef68A6C900F36db3a86cb1", deployer),
-    crvDepositorWrapper: CrvDepositorWrapper__factory.connect("0x4AC5c047CfA39b14fb06564DEC7D85e6fA2b045a", deployer),
-    poolManager: PoolManagerV3__factory.connect("0x0B4566B619Dc12381E386564E45df62316259E71", deployer),
-    poolManagerProxy: PoolManagerProxy__factory.connect("0x073b3903BC9747B4e7e974698a202cA2c591FEC1", deployer),
+    cvxCrvRewards: BaseRewardPool__factory.connect("0xA2F294C74fe9d63Dc272b6a5C3aE494BfA0DF14B", deployer),
+    crvDepositor: CrvDepositor__factory.connect("0x46af03341e0Afb410c87c5A6dF412Bf5C8858cCc", deployer),
+    crvDepositorWrapper: CrvDepositorWrapper__factory.connect("0x79CC68A74F388d260e6Ed8F8aE2ce810E8d6FE38", deployer),
+    poolManager: PoolManagerV3__factory.connect("0x68707046fF3fC67c931f0eb5f6d227bbe1DE6a7B", deployer),
+    poolManagerProxy: PoolManagerProxy__factory.connect("0xA5e7926f7385c96c9a0DB751234EFc3eB503bA89", deployer),
     poolManagerSecondaryProxy: PoolManagerSecondaryProxy__factory.connect(
-        "0x0Fc3C95E512E44EAA12C4e5543643B17Aa20a1D6",
+        "0x06531Dbfce795B84b4d29943eDF08239855c4D62",
         deployer,
     ),
-    cvxLocker: AuraLocker__factory.connect("0x1e5B33222977642Bf64EC80846BBF83A016727A0", deployer),
-    cvxStakingProxy: AuraStakingProxy__factory.connect("0x1a8bb30f2aff498ef026d2bccc8971a30144b93c", deployer),
-    initialCvxCrvStaking: AuraBalRewardPool__factory.connect(ZERO_ADDRESS, deployer),
-    chef: ConvexMasterChef__factory.connect("0xa3fCaFCa8150636C3B736A16Cd73d49cC8A7E10E", deployer),
-    vestedEscrows: [],
-    drops: [],
+    cvxLocker: AuraLocker__factory.connect("0x984B0aDFf6137BB1E00c977c594f4C1664894CEc", deployer),
+    cvxStakingProxy: AuraStakingProxy__factory.connect("0x3DF79aFA5ECaCfB67719F0c34b562BA8cA5F0945", deployer),
+    initialCvxCrvStaking: AuraBalRewardPool__factory.connect("0xEC24eBf4c3AE1fF5B8FeFdA36B63a36261Fb95c1", deployer),
+    chef: ConvexMasterChef__factory.connect("0x8155a8fc133648aA21272dD5afE2a700B28c6250", deployer),
+    vestedEscrows: [], //"0xad45617A84F30868Ee69d5A22dCB49AE0AD78D57","0xaB79aa6238D0d4BB27651534Fb08F4Bf1Ece122B","0x0Ee0CaE533B5c86910De029bbB3238c8824C11c4","0xEEf969A8ebdf73C5c5D8A2855206F1154Cd1a297"],
+    drops: [], //"0xae6d5d7a8108c074220D3692C045696389d6D933","0x68AAf3ac16b57f3eC47F766b11f18f3DFFdC18db"],
     lbpBpt: {
         poolId: ZERO_ADDRESS,
         address: ZERO_ADDRESS,
     },
-    balLiquidityProvider: BalLiquidityProvider__factory.connect(ZERO_ADDRESS, deployer),
-    penaltyForwarder: AuraPenaltyForwarder__factory.connect(ZERO_ADDRESS, deployer),
+    balLiquidityProvider: BalLiquidityProvider__factory.connect("0xaffFf00e97A82535AB9e6B22D26fB37B8b66B9dF", deployer),
+    penaltyForwarder: AuraPenaltyForwarder__factory.connect("0xB3Fa61fAC621e23A8fAcc26e54902D69851ac572", deployer),
     extraRewardsDistributor: ExtraRewardsDistributor__factory.connect(
-        "0xbdfFBBD7Ac592a53405AE152B6D23CF3F6B8a738",
+        "0xa7AAa5feE1676938Eec8E45F984552C216da3796",
         deployer,
     ),
 });
@@ -159,21 +159,21 @@ const getPhase3 = async (deployer: Signer): Promise<Phase3Deployed> => ({
 
 const getPhase4 = async (deployer: Signer): Promise<SystemDeployed> => ({
     ...(await getPhase3(deployer)),
-    claimZap: AuraClaimZap__factory.connect("0x9Ba88Cb931B46a6E646B9bd0ba677D375647EB23", deployer),
-    feeCollector: ClaimFeesHelper__factory.connect("0xDc2f8293f7f3E49a949df6A1FB1bCb9200eC3982", deployer),
+    claimZap: AuraClaimZap__factory.connect("0x39c8bE679120fcE63c9bB6ED5c6bE8225C9f16b9", deployer),
+    feeCollector: ClaimFeesHelper__factory.connect("0x43Cd36E200EE1e590a930c21Fd1f67bb90d7f8B3", deployer),
     rewardDepositWrapper: RewardPoolDepositWrapper__factory.connect(
-        "0x0a6bcB3a0C03aB2Bc8A058ee02ed11D50b494083",
+        "0x9161Fb533BA46B48464F945E4520CDD0E8d4F223",
         deployer,
     ),
 });
 const getPhase6 = async (deployer: Signer): Promise<Phase6Deployed> => ({
     // same as phase 2  as goerli was never migrated.
-    booster: Booster__factory.connect("0x2ad214dA65effA92159057957E50994440E99A1b", deployer),
+    booster: Booster__factory.connect("0xA0357552c3e4ACB2f5828D1322D90A22801AD196", deployer),
     boosterOwner: undefined,
     boosterHelper: undefined,
     feeCollector: undefined,
     factories: undefined,
-    cvxCrvRewards: BaseRewardPool__factory.connect("0x09421e5d9c2b11f502482dce2b718b037fd10a25", deployer),
+    cvxCrvRewards: BaseRewardPool__factory.connect("0xA2F294C74fe9d63Dc272b6a5C3aE494BfA0DF14B", deployer),
     poolManager: undefined,
     poolManagerProxy: undefined,
     poolManagerSecondaryProxy: undefined,
