@@ -967,6 +967,7 @@ async function deployPhase2(
         lbpBpt = { address: poolAddress, poolId };
         const balancerVault = IBalancerVault__factory.connect(config.balancerVault, deployer);
 
+        console.log(wethAmount);
         tx = await MockERC20__factory.connect(config.weth, deployer).approve(config.balancerVault, wethAmount);
         await waitForTx(tx, debug, waitForBlocks);
         tx = await cvx.approve(config.balancerVault, tknAmount);
@@ -1072,6 +1073,7 @@ async function deployPhase3(
     // If Mainnet or Kovan, create LBP
     let tx: ContractTransaction;
     let pool: BalancerPoolDeployed = { address: DEAD_ADDRESS, poolId: ZERO_KEY };
+    console.log("LBP");
     if (chain == Chain.mainnet || chain == Chain.kovan) {
         const tknAmount = await cvx.balanceOf(balLiquidityProvider.address);
         const wethAmount = await MockERC20__factory.connect(config.weth, deployer).balanceOf(

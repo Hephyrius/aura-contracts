@@ -1,0 +1,2 @@
+yarn task deploy:goerli:234 --network goerli 
+npx hardhat node --fork https://rpc.ankr.com/eth_goerli

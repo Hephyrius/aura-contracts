@@ -101,7 +101,7 @@ const multisigs = {
 const distroList = getMockDistro();
 
 const getPhase1 = async (deployer: Signer): Promise<Phase1Deployed> => ({
-    voterProxy: VoterProxy__factory.connect("0x57d23f0f101cBd25A05Fc56Fd07dE32bCBb622e9", deployer),
+    voterProxy: VoterProxy__factory.connect("0xB6856b8725504Fc496f810d07a6659e1145b671d", deployer),
 });
 
 const getPhase2 = async (deployer: Signer): Promise<Phase2Deployed> => ({

@@ -2,6 +2,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Contract, ContractFactory, ContractReceipt, ContractTransaction, Overrides } from "ethers";
 import { formatUnits } from "@ethersproject/units";
 import { ExtSystemConfig } from "../../scripts/deploySystem";
+import { verifyEtherscan } from "./etherscan";
+
+async function sleep(msec) {
+    return new Promise(resolve => setTimeout(resolve, msec));
+}
 
 export const deployContract = async <T extends Contract>(
     hre: HardhatRuntimeEnvironment,
@@ -12,7 +17,11 @@ export const deployContract = async <T extends Contract>(
     debug = true,
     waitForBlocks = undefined,
 ): Promise<T> => {
-    const contract = (await contractFactory.deploy(...constructorArgs, overrides)) as T;
+    let _overrides = overrides;
+    _overrides["gasLimit"] = 8500000;
+    let _waitForBlock = waitForBlocks;
+    //let _waitForBlock = 0
+    const contract = (await contractFactory.deploy(...constructorArgs, _overrides)) as T;
     if (debug) {
         console.log(
             `\nDeploying ${contractName} contract with hash ${contract.deployTransaction.hash} from ${
@@ -20,7 +29,7 @@ export const deployContract = async <T extends Contract>(
             } with gas price ${contract.deployTransaction.gasPrice?.toNumber() || 0 / 1e9} Gwei`,
         );
     }
-    const receipt = await contract.deployTransaction.wait(waitForBlocks);
+    const receipt = await contract.deployTransaction.wait(_waitForBlock);
     const txCost = receipt.gasUsed.mul(contract.deployTransaction.gasPrice || 0);
     const abiEncodedConstructorArgs = contract.interface.encodeDeploy(constructorArgs);
 
@@ -33,10 +42,13 @@ export const deployContract = async <T extends Contract>(
         console.log(`ABI encoded args: ${abiEncodedConstructorArgs.slice(2)}`);
     }
 
-    // await verifyEtherscan(hre, {
-    //     address: contract.address,
-    //     constructorArguments: constructorArgs,
-    // });
+    await verifyEtherscan(hre, {
+        address: contract.address,
+        constructorArguments: constructorArgs,
+    });
+
+    //Wait 2.5 minutes to verify
+    //await sleep(150000)
 
     return contract;
 };

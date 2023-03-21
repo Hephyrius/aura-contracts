@@ -51,7 +51,7 @@ const goerliBalancerConfig: ExtSystemConfig = {
     weth: "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1",
 };
 
-const forking = false;
+const forking = true;
 const waitForBlocks = forking ? undefined : 3;
 
 task("deploy:goerli:1").setAction(async function (taskArguments: TaskArguments, hre) {
@@ -68,7 +68,7 @@ task("deploy:goerli:234").setAction(async function (taskArguments: TaskArguments
     const deployerAddress = await deployer.getAddress();
 
     const phase1 = {
-        voterProxy: VoterProxy__factory.connect("0x57d23f0f101cBd25A05Fc56Fd07dE32bCBb622e9", deployer),
+        voterProxy: VoterProxy__factory.connect("0xB6856b8725504Fc496f810d07a6659e1145b671d", deployer),
     };
 
     const contracts = await deployGoerli234(
