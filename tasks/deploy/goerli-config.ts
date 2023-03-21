@@ -42,6 +42,9 @@ import {
     BalancerSwapsHandler,
     VirtualBalanceRewardPool,
     VirtualBalanceRewardPool__factory,
+    PoolManagerV4__factory,
+    BoosterOwnerSecondary__factory,
+    ExtraRewardStashV3__factory,
 } from "../../types/generated";
 import { Signer } from "ethers";
 import { ZERO_ADDRESS } from "../../test-utils/constants";
@@ -178,8 +181,16 @@ const getPhase6 = async (deployer: Signer): Promise<Phase6Deployed> => ({
     poolManagerProxy: undefined,
     poolManagerSecondaryProxy: undefined,
     claimZap: undefined,
-    stashV3: undefined,
+    stashV3: ExtraRewardStashV3__factory.connect("0x006aCF075161129190432D52F49dC4Ed267AC23A", deployer),
     poolMigrator: undefined,
+});
+
+const getPhase8 = async (deployer: Signer): Promise<Phase8Deployed> => ({
+    poolManagerV4: PoolManagerV4__factory.connect("0x67b36B5A54Ab33C0cD38682693eEc78D08B008d1", deployer),
+    boosterOwnerSecondary: BoosterOwnerSecondary__factory.connect(
+        "0x3F8fa3CBd1157C8BaA5374feea0058A9AE68eb93",
+        deployer,
+    ),
 });
 
 export interface AuraBalVaultDeployed {
@@ -206,5 +217,6 @@ export const config = {
     getPhase3,
     getPhase4,
     getPhase6,
+    getPhase8,
     getAuraBalVault,
 };
