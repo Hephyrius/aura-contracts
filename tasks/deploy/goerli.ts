@@ -51,7 +51,7 @@ const goerliBalancerConfig: ExtSystemConfig = {
     weth: "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1",
 };
 
-const forking = true;
+const forking = false;
 const waitForBlocks = forking ? undefined : 3;
 
 task("deploy:goerli:1").setAction(async function (taskArguments: TaskArguments, hre) {
@@ -88,7 +88,7 @@ task("deploy:goerli:234").setAction(async function (taskArguments: TaskArguments
     );
 
     logContracts(contracts as unknown as { [key: string]: { address: string } });
-
+    /*
     const poolInfo = await contracts.booster.poolInfo(0);
     const lp = ERC20__factory.connect(poolInfo.lptoken, deployer);
 
@@ -116,6 +116,7 @@ task("deploy:goerli:234").setAction(async function (taskArguments: TaskArguments
         contracts.initialCvxCrvStaking.address,
     );
     await waitForTx(tx, true, waitForBlocks);
+    */
 });
 
 async function deployGoerli234(

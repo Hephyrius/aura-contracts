@@ -106,10 +106,10 @@ const getPhase1 = async (deployer: Signer): Promise<Phase1Deployed> => ({
 
 const getPhase2 = async (deployer: Signer): Promise<Phase2Deployed> => ({
     ...(await getPhase1(deployer)),
-    cvx: AuraToken__factory.connect("0xFf3653ee692F541efB7c2214D72FE05A7A6EC01f", deployer),
-    minter: AuraMinter__factory.connect("0x3366EfDdc7d268759a1A1273740aE5C626b2DFbA", deployer),
-    booster: Booster__factory.connect("0x2ad214dA65effA92159057957E50994440E99A1b", deployer),
-    boosterOwner: BoosterOwner__factory.connect("0x6931835d072f50d98D7a7BF7B2C4faFdA86628d7", deployer),
+    cvx: AuraToken__factory.connect("0x8Ef4f64D86016D30266c91cDDbE555B52a3Ce833", deployer),
+    minter: AuraMinter__factory.connect("0x4D790084E4E7a5caCb85156AaA4DD14eDf813bf8", deployer),
+    booster: Booster__factory.connect("0xA0357552c3e4ACB2f5828D1322D90A22801AD196", deployer),
+    boosterOwner: BoosterOwner__factory.connect("0xeAb0b6c2528C54887d5DD3765ed9Bd1884A1d125", deployer),
     factories: {
         rewardFactory: RewardFactory__factory.connect("0x78868AcEe480928E3A5a9e50545bf2f53903e350", deployer),
         stashFactory: StashFactoryV2__factory.connect("0x17581a142f181CeA807a480520537E4e97A63adB", deployer),
