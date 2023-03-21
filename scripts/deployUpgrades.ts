@@ -10,7 +10,7 @@ import {
     PoolManagerV4__factory,
 } from "../types";
 import { deployContract } from "../tasks/utils";
-import { config } from "../tasks/deploy/mainnet-config";
+import { config } from "../tasks/deploy/goerli-config";
 
 export async function deployUpgrade01(
     hre: HardhatRuntimeEnvironment,
@@ -19,7 +19,7 @@ export async function deployUpgrade01(
     waitForBlocks = 0,
 ) {
     const { addresses, multisigs } = config;
-    const phase6 = await config.getPhase6(signer);
+    const phase2 = await config.getPhase2(signer);
 
     const extraRewardStashV3 = await deployContract<ExtraRewardStashV3>(
         hre,
@@ -35,7 +35,7 @@ export async function deployUpgrade01(
         hre,
         new PoolManagerV4__factory(signer),
         "PoolManagerV4",
-        [phase6.poolManagerSecondaryProxy.address, multisigs.daoMultisig],
+        [phase2.poolManagerSecondaryProxy.address, multisigs.daoMultisig],
         {},
         debug,
         waitForBlocks,
@@ -45,7 +45,7 @@ export async function deployUpgrade01(
         hre,
         new BoosterOwnerSecondary__factory(signer),
         "BoosterOwnerSecondary",
-        [multisigs.daoMultisig, phase6.boosterOwner.address, phase6.booster.address],
+        [multisigs.daoMultisig, phase2.boosterOwner.address, phase2.booster.address],
         {},
         debug,
         waitForBlocks,

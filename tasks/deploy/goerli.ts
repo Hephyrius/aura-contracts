@@ -26,6 +26,7 @@ import {
 } from "../../types/generated";
 import { ZERO_ADDRESS } from "../../test-utils/constants";
 import { config } from "./goerli-config";
+import { deployUpgrade01 } from "../../scripts/deployUpgrades";
 import { deployVault } from "../../scripts/deployVault";
 
 const debug = true;
@@ -202,6 +203,38 @@ task("deploy:goerli:uniswapMigrator").setAction(async function (taskArguments: T
     );
 
     console.log("update uniswapMigrator address to:", uniswapMigrator.address);
+});
+
+task("deploy:goerli:upgrade").setAction(async function (taskArguments: TaskArguments, hre) {
+    const deployer = await getSigner(hre);
+    const deployerAddress = await deployer.getAddress();
+    console.log(deployerAddress);
+
+    const contracts = await deployUpgrade01(hre, deployer, debug, waitForBlocks);
+    //const result = await config.getPhase8(deployer);
+
+    let newStashImpl = contracts.extraRewardStashV3;
+    let poolManagerV4 = contracts.poolManagerV4;
+    let boosterOwnerSecondary = contracts.boosterOwnerSecondary;
+
+    const phase2 = await config.getPhase2(deployer);
+
+    let tx = await phase2.boosterOwner.setStashFactoryImplementation(ZERO_ADDRESS, ZERO_ADDRESS, newStashImpl.address);
+    await waitForTx(tx, false, waitForBlocks);
+
+    tx = await phase2.boosterOwner.transferOwnership(boosterOwnerSecondary.address);
+    await waitForTx(tx, false, waitForBlocks);
+
+    tx = await boosterOwnerSecondary.acceptOwnershipBoosterOwner();
+    await waitForTx(tx, false, waitForBlocks);
+
+    tx = await phase2.poolManagerSecondaryProxy.setOperator(poolManagerV4.address);
+    await waitForTx(tx, false, waitForBlocks);
+
+    tx = await phase2.poolManagerSecondaryProxy.setOwner(poolManagerV4.address);
+    await waitForTx(tx, false, waitForBlocks);
+
+    logContracts(contracts as unknown as { [key: string]: { address: string } });
 });
 
 task("deploy:goerli:vault")
