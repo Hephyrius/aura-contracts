@@ -221,6 +221,12 @@ yarn task timeTravel --duration 69420 --network forking
 | extraRewardStashV3        | [0x006aCF075161129190432D52F49dC4Ed267AC23A](https://goerli.etherscan.io/address/0x006aCF075161129190432D52F49dC4Ed267AC23A) |
 | boosterOwnerSecondary     | [0x3F8fa3CBd1157C8BaA5374feea0058A9AE68eb93](https://goerli.etherscan.io/address/0x3F8fa3CBd1157C8BaA5374feea0058A9AE68eb93) |
 | poolManagerV4             | [0x67b36B5A54Ab33C0cD38682693eEc78D08B008d1](https://goerli.etherscan.io/address/0x67b36B5A54Ab33C0cD38682693eEc78D08B008d1) |
+| 50slkBUL-50B-80BAL-20WETH | [0x16442f5670083dB2eF1fe6820a59cb9Baa0113B5](https://goerli.etherscan.io/address/0x16442f5670083dB2eF1fe6820a59cb9Baa0113B5) |
+| vault                     | [0x0E69F37f5009c174537277BA956A13663AAAa814](https://goerli.etherscan.io/address/0x0E69F37f5009c174537277BA956A13663AAAa814) |
+| strategy                  | [0x098810A74E7682fD650439E2b7440519cf4B022A](https://goerli.etherscan.io/address/0x098810A74E7682fD650439E2b7440519cf4B022A) |
+| bbusdHandler              | [0xb30a0c7ac99D61650A528AbB31A46470C55f4834](https://goerli.etherscan.io/address/0xb30a0c7ac99D61650A528AbB31A46470C55f4834) |
+| auraRewards               | [0x6fE74EA452b21698bbC27617b2B23FB797393094](https://goerli.etherscan.io/address/0x6fE74EA452b21698bbC27617b2B23FB797393094) |
+| virtualRewardFactory      | [0x3f897302B09e763650D825Cd3c738EfDf8510Ad8](https://goerli.etherscan.io/address/0x3f897302B09e763650D825Cd3c738EfDf8510Ad8) |
 
 ### Ethereum Mainnet (1) @deprecated
 

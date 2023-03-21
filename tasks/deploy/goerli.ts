@@ -52,7 +52,7 @@ const goerliBalancerConfig: ExtSystemConfig = {
     weth: "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1",
 };
 
-const forking = true;
+const forking = false;
 const waitForBlocks = forking ? undefined : 3;
 
 task("deploy:goerli:1").setAction(async function (taskArguments: TaskArguments, hre) {

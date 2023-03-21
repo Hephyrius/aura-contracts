@@ -4,6 +4,7 @@ import {
     Phase2Deployed,
     Phase3Deployed,
     Phase6Deployed,
+    Phase8Deployed,
     SystemDeployed,
 } from "../../scripts/deploySystem";
 import {
@@ -122,7 +123,7 @@ const getPhase2 = async (deployer: Signer): Promise<Phase2Deployed> => ({
     arbitratorVault: ArbitratorVault__factory.connect("0x8e258eaBDc2aeE5528A9517C0199DB8f5CdC2cC9", deployer),
     cvxCrv: CvxCrvToken__factory.connect("0x13CCfb302Ab3EC5e646bD9Bdc87180fD255ee6A8", deployer),
     cvxCrvBpt: {
-        poolId: "0x5e2aa66efd74cce82b21852e317e5490d9ecc9e6bb953ae24d90851258cc2f5c",
+        poolId: "0x16442f5670083db2ef1fe6820a59cb9baa0113b50002000000000000000006e7",
         address: "0xD30d0B8667fd215ECEe125f56ae1e30d42659850",
     },
     cvxCrvRewards: BaseRewardPool__factory.connect("0xA2F294C74fe9d63Dc272b6a5C3aE494BfA0DF14B", deployer),
@@ -201,10 +202,10 @@ export interface AuraBalVaultDeployed {
 }
 
 const getAuraBalVault = async (deployer: Signer): Promise<AuraBalVaultDeployed> => ({
-    vault: AuraBalVault__factory.connect("0xF891822bC811CF683a6DD9e4d28ebf3dF8B7C6c3", deployer),
-    strategy: AuraBalStrategy__factory.connect("0xB401f0cff9F05d10699c0e2c88a81dD923c1FFFf", deployer),
-    bbusdHandler: BalancerSwapsHandler__factory.connect("0xaA54f3b282805822419265208e669d12372a3811", deployer),
-    auraRewards: VirtualBalanceRewardPool__factory.connect("0xdF9080B6BfE4630a97A0655C0016E0e9B43a7C68", deployer),
+    vault: AuraBalVault__factory.connect("0x0E69F37f5009c174537277BA956A13663AAAa814", deployer),
+    strategy: AuraBalStrategy__factory.connect("0x098810A74E7682fD650439E2b7440519cf4B022A", deployer),
+    bbusdHandler: BalancerSwapsHandler__factory.connect("0xb30a0c7ac99D61650A528AbB31A46470C55f4834", deployer),
+    auraRewards: VirtualBalanceRewardPool__factory.connect("0x6fE74EA452b21698bbC27617b2B23FB797393094", deployer),
 });
 
 export const config = {

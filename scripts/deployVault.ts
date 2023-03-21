@@ -84,7 +84,7 @@ export async function deployVault(
         [
             vault.address,
             config.addresses.balancerVault,
-            phase6.cvxCrvRewards.address,
+            phase2.cvxCrvRewards.address,
             config.addresses.token,
             config.addresses.weth,
             phase2.cvx.address,
