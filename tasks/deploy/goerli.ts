@@ -52,7 +52,7 @@ const goerliBalancerConfig: ExtSystemConfig = {
     weth: "0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1",
 };
 
-const forking = false;
+const forking = true;
 const waitForBlocks = forking ? undefined : 3;
 
 task("deploy:goerli:1").setAction(async function (taskArguments: TaskArguments, hre) {
@@ -237,21 +237,15 @@ task("deploy:goerli:upgrade").setAction(async function (taskArguments: TaskArgum
     logContracts(contracts as unknown as { [key: string]: { address: string } });
 });
 
-task("deploy:goerli:vault")
-    .addParam("wait", "How many blocks to wait")
-    .setAction(async function (tskArgs: TaskArguments, hre) {
-        const deployer = await getSigner(hre);
+task("deploy:goerli:vault").setAction(async function (tskArgs: TaskArguments, hre) {
+    const deployer = await getSigner(hre);
 
-        const { vault, strategy, bbusdHandler, auraRewards } = await deployVault(
-            config,
-            hre,
-            deployer,
-            debug,
-            tskArgs.wait || waitForBlocks,
-        );
+    const contracts = await deployVault(config, hre, deployer, debug, tskArgs.wait || waitForBlocks);
 
-        console.log("Vault:", vault.address);
-        console.log("Strategy:", strategy.address);
-        console.log("BBUSD Handler:", bbusdHandler.address);
-        console.log("AuraRewards:", auraRewards.address);
-    });
+    console.log("Vault:", contracts.vault.address);
+    console.log("Strategy:", contracts.strategy.address);
+    console.log("BBUSD Handler:", contracts.bbusdHandler.address);
+    console.log("AuraRewards:", contracts.auraRewards.address);
+
+    logContracts(contracts as unknown as { [key: string]: { address: string } });
+});
