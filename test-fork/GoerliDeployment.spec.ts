@@ -7,10 +7,10 @@ import { getTimestamp, latestBlock } from "./../test-utils/time";
 import { Phase2Deployed } from "../scripts/deploySystem";
 import { config } from "../tasks/deploy/goerli-config";
 
-describe.skip("Full Deployment", () => {
+describe("Full Deployment", () => {
     let deployer: Signer;
     let deployerAddress: string;
-    const phase2Timestamp = BN.from(1657282100);
+    const phase2Timestamp = BN.from(1679414400);
     let phase2: Phase2Deployed;
 
     before(async () => {
@@ -20,12 +20,12 @@ describe.skip("Full Deployment", () => {
                 {
                     forking: {
                         jsonRpcUrl: process.env.NODE_URL,
-                        blockNumber: 7191313,
+                        blockNumber: 8693860,
                     },
                 },
             ],
         });
-        deployerAddress = "0x30019eB135532bDdF2Da17659101cc000C73c8e4";
+        deployerAddress = "0xcC4790f1493aD2be35f868e8429398794246144A";
         deployer = await impersonate(deployerAddress);
     });
 
@@ -94,7 +94,7 @@ describe.skip("Full Deployment", () => {
                     expect(await booster.stakerIncentive()).eq(1100);
                     expect(await booster.earmarkIncentive()).eq(50);
                     expect(await booster.platformFee()).eq(0);
-                    expect(await booster.MaxFees()).eq(2500);
+                    expect(await booster.MaxFees()).eq(4000);
                     expect(await booster.FEE_DENOMINATOR()).eq(10000);
 
                     expect(await booster.owner()).eq(boosterOwner.address);
@@ -234,7 +234,7 @@ describe.skip("Full Deployment", () => {
                     expect(await poolManager.pools()).eq(poolManagerSecondaryProxy.address);
                     expect(await poolManager.gaugeController()).eq(addresses.gaugeController);
                     expect(await poolManager.operator()).eq(multisigs.daoMultisig);
-                    expect(await poolManager.protectAddPool()).eq(true);
+                    expect(await poolManager.protectAddPool()).eq(false);
                 });
                 it("Aura Locker has correct config", async () => {
                     const { cvxLocker, cvxCrv, cvxStakingProxy, cvx, cvxCrvRewards } = phase2;
@@ -272,8 +272,9 @@ describe.skip("Full Deployment", () => {
                     const cvxPerBlock = distroList.lpIncentives.div(totalBlocks);
                     assertBNClosePercent(await chef.rewardPerBlock(), cvxPerBlock, "0.01");
                     expect(await chef.poolLength()).eq(1);
+                    console.log(chef.poolInfo[0]);
                     expect((await chef.poolInfo(0)).lpToken.toLowerCase()).eq(
-                        "0xac98c986d8318ff08109ae6f4e7043468da9d0a2",
+                        "0xd30d0b8667fd215ecee125f56ae1e30d42659850",
                     );
                     expect(await chef.totalAllocPoint()).eq(1000);
                     const block = await latestBlock();
