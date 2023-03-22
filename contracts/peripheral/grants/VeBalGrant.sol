@@ -108,6 +108,12 @@ contract VeBalGrant {
         _;
     }
 
+    modifier whileInactive() {
+        require(!active, "active");
+        _;
+    }
+
+
     /* ----------------------------------------------------------------
        Shared Functions
     ---------------------------------------------------------------- */
@@ -123,12 +129,12 @@ contract VeBalGrant {
     }
 
     // @notice Exit BPT for BAL ETH
-    function redeem() external onlyAuth {
+    function redeem() external onlyAuth whileInactive{
         // TODO: exit bal eth pool
     }
 
     /// @notice Release veBAL lock
-    function release() external onlyAuth {
+    function release() external onlyAuth whileInactive {
         votingEscrow.withdraw();
     }
 
@@ -222,6 +228,27 @@ contract VeBalGrant {
                 false // Don't use internal balances
             )
         );
+    }
+
+    function _exitBalEthPool() internal {
+        IAsset[] memory assets = new IAsset[](2);
+        assets[0] = IAsset(address(BAL));
+        assets[1] = IAsset(address(WETH));
+        uint256[] memory minAmountsOut = new uint256[](2);
+        uint balance = BAL_ETH_BPT.balanceOf(address(this));
+
+        BALANCER_VAULT.exitPool(
+            BAL_ETH_POOL_ID,
+            address(this),
+            payable(address(this)),
+            IBalancerVault.ExitPoolRequest(
+                assets,
+                minAmountsOut,
+                abi.encode(IBalancerVault.ExitKind.EXACT_BPT_IN_FOR_TOKENS_OUT, balance),
+                false // Don't use internal balances
+            )
+        );
+
     }
 
     function _increaseLock(uint256 amount) internal {
