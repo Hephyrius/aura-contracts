@@ -51,7 +51,7 @@ contract VeBalGrant {
 
     address public immutable balancer;
 
-    address public immutable hiddenhand;
+    address public immutable hiddenHand;
 
     bool public active;
 
@@ -73,7 +73,7 @@ contract VeBalGrant {
         address _veBalGauge,
         address _project,
         address _balancer,
-        address _hiddenhand,
+        address _hiddenHand,
         IBalancerVault _balancerVault,
         bytes32 _balETHPoolId
     ) {
@@ -86,7 +86,7 @@ contract VeBalGrant {
         veBalGauge = _veBalGauge;
         project = _project;
         balancer = _balancer;
-        hiddenhand = _hiddenhand;
+        hiddenHand = _hiddenHand;
         BALANCER_VAULT = _balancerVault;
         BAL_ETH_POOL_ID = _balETHPoolId;
         active = true;
@@ -200,7 +200,7 @@ contract VeBalGrant {
             require(msg.sender == balancer);
         }
 
-        IHiddenhand(hiddenhand).setRewardForwarding(_to);
+        IHiddenHand(hiddenHand).setRewardForwarding(_to);
     }
 
     /* ----------------------------------------------------------------
