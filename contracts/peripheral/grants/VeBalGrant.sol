@@ -24,6 +24,10 @@ interface IBalMinter {
     function mint(address) external;
 }
 
+interface IHiddenHand {
+    function setRewardForwarding(address to) external;
+}
+
 contract VeBalGrant {
     /* ----------------------------------------------------------------
        Storage 
@@ -47,6 +51,8 @@ contract VeBalGrant {
 
     address public immutable balancer;
 
+    address public immutable hiddenhand;
+
     bool public active;
 
     IBalancerVault public immutable BALANCER_VAULT;
@@ -67,6 +73,7 @@ contract VeBalGrant {
         address _veBalGauge,
         address _project,
         address _balancer,
+        address _hiddenhand,
         IBalancerVault _balancerVault,
         bytes32 _balETHPoolId
     ) {
@@ -79,6 +86,7 @@ contract VeBalGrant {
         veBalGauge = _veBalGauge;
         project = _project;
         balancer = _balancer;
+        hiddenhand = _hiddenhand;
         BALANCER_VAULT = _balancerVault;
         BAL_ETH_POOL_ID = _balETHPoolId;
         active = true;
@@ -130,7 +138,7 @@ contract VeBalGrant {
 
     // @notice Exit BPT for BAL ETH
     function redeem() external onlyAuth whileInactive{
-        // TODO: exit bal eth pool
+        _exitBalEthPool();
     }
 
     /// @notice Release veBAL lock
@@ -185,14 +193,14 @@ contract VeBalGrant {
     }
 
     /// @notice Forward HH voting incentives
-    function forwardIncentives() external {
+    function forwardIncentives(address _to) external {
         if (active) {
             require(msg.sender == project);
         } else {
             require(msg.sender == balancer);
         }
 
-        // TODO:
+        IHiddenhand(hiddenhand).setRewardForwarding(_to);
     }
 
     /* ----------------------------------------------------------------
@@ -209,7 +217,6 @@ contract VeBalGrant {
     ---------------------------------------------------------------- */
 
     function _joinBalEthPool() internal {
-        // TODO:
         IAsset[] memory assets = new IAsset[](2);
         assets[0] = IAsset(address(BAL));
         assets[1] = IAsset(address(WETH));
@@ -248,7 +255,6 @@ contract VeBalGrant {
                 false // Don't use internal balances
             )
         );
-
     }
 
     function _increaseLock(uint256 amount) internal {
