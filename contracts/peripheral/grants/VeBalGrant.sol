@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity >=0.8.11;
 
-import { IFeeDistributor } from "../interfaces/balancer/IFeeDistributor.sol";
-import { IERC20 } from "@openzeppelin/contracts-0.8/token/ERC20/IERC20.sol";
+import { IBalancerVault, IPriceOracle, IAsset } from "../../interfaces/balancer/IBalancerCore.sol";
+import { IFeeDistributor } from "../../interfaces/balancer/IFeeDistributor.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+import "hardhat/console.sol";
 
 // prettier-ignore
 interface IVotingEscrow {
@@ -45,6 +49,10 @@ contract VeBalGrant {
 
     bool public active;
 
+    IBalancerVault public immutable BALANCER_VAULT;
+
+    bytes32 public immutable BAL_ETH_POOL_ID;
+
     /* ----------------------------------------------------------------
        Constructor 
     ---------------------------------------------------------------- */
@@ -58,7 +66,9 @@ contract VeBalGrant {
         address _balMinter,
         address _veBalGauge,
         address _project,
-        address _balancer
+        address _balancer,
+        IBalancerVault _balancerVault,
+        bytes32 _balETHPoolId
     ) {
         WETH = IERC20(_weth);
         BAL = IERC20(_bal);
@@ -69,6 +79,8 @@ contract VeBalGrant {
         veBalGauge = _veBalGauge;
         project = _project;
         balancer = _balancer;
+        BALANCER_VAULT = _balancerVault;
+        BAL_ETH_POOL_ID = _balETHPoolId;
         active = true;
     }
 
@@ -192,6 +204,24 @@ contract VeBalGrant {
 
     function _joinBalEthPool() internal {
         // TODO:
+        IAsset[] memory assets = new IAsset[](2);
+        assets[0] = IAsset(address(BAL));
+        assets[1] = IAsset(address(WETH));
+        uint256[] memory maxAmountsIn = new uint256[](2);
+        maxAmountsIn[0] = BAL.balanceOf(address(this));
+        maxAmountsIn[1] = WETH.balanceOf(address(this));
+
+        BALANCER_VAULT.joinPool(
+            BAL_ETH_POOL_ID,
+            address(this),
+            address(this),
+            IBalancerVault.JoinPoolRequest(
+                assets,
+                maxAmountsIn,
+                abi.encode(IBalancerVault.JoinKind.EXACT_TOKENS_IN_FOR_BPT_OUT, maxAmountsIn, 0),
+                false // Don't use internal balances
+            )
+        );
     }
 
     function _increaseLock(uint256 amount) internal {
